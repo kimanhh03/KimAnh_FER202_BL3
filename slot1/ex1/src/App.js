@@ -1,7 +1,9 @@
+import logo from './logo.svg';
 import './App.css';
 
 function App() {
   const myName = "Kim Anh";
+
   return (
     <div>
       <h1>Hello React</h1>
