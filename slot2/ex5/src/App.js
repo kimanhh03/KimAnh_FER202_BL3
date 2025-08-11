@@ -10,7 +10,7 @@ function App() {
   ];
 
   return (
-    <div style={{ padding: "20px" }}>
+    <div>
       <h1>List of Courses</h1>
       <ul>
         {courses.map(course => (
