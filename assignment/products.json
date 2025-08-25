@@ -1,0 +1,118 @@
+{
+  "products": [
+    {
+      "id": 1,
+      "title": "Túi Xách Tay Cao Cấp",
+      "name": "Louis Vuitton",
+      "image": "/images/handbag1.jpg",
+      "price": 2500000,
+      "salePrice": 2200000,
+      "description": "Túi xách tay cao cấp từ da thật, thiết kế sang trọng và tinh tế.",
+      "tags": ["hot", "sale"]
+    },
+    {
+      "id": 2,
+      "title": "Túi Đeo Chéo Thời Trang",
+      "name": "Gucci",
+      "image": "/images/handbag2.jpg",
+      "price": 1800000,
+      "salePrice": 1600000,
+      "description": "Túi đeo chéo phong cách hiện đại, phù hợp cho mọi dịp.",
+      "tags": ["sale"]
+    },
+    {
+      "id": 3,
+      "title": "Túi Clutch Dự Tiệc",
+      "name": "Chanel",
+      "image": "/images/handbag3.jpg",
+      "price": 1200000,
+      "description": "Túi clutch nhỏ gọn, hoàn hảo cho các buổi tiệc tối.",
+      "tags": []
+    },
+    {
+      "id": 4,
+      "title": "Túi Tote Công Sở",
+      "name": "Hermès",
+      "image": "/images/handbag4.jpg",
+      "price": 3200000,
+      "salePrice": 2800000,
+      "description": "Túi tote rộng rãi, lý tưởng cho công việc hàng ngày.",
+      "tags": ["hot", "sale"]
+    },
+    {
+      "id": 5,
+      "title": "Túi Backpack Nữ",
+      "name": "Prada",
+      "image": "/images/handbag5.jpg",
+      "price": 2100000,
+      "description": "Túi ba lô thời trang, kết hợp giữa tiện dụng và phong cách.",
+      "tags": ["hot"]
+    },
+    {
+      "id": 6,
+      "title": "Túi Hobo Bohemian",
+      "name": "Coach",
+      "image": "/images/handbag6.jpg",
+      "price": 1500000,
+      "salePrice": 1300000,
+      "description": "Túi hobo phong cách bohemian, thoải mái và năng động.",
+      "tags": ["sale"]
+    },
+    {
+      "id": 7,
+      "title": "Túi Satchel Vintage",
+      "name": "Michael Kors",
+      "image": "/images/handbag7.jpg",
+      "price": 1100000,
+      "description": "Túi satchel phong cách vintage, thiết kế cổ điển và thanh lịch.",
+      "tags": ["hot"]
+    },
+    {
+      "id": 8,
+      "title": "Túi Mini Crossbody",
+      "name": "Kate Spade",
+      "image": "/images/handbag8.jpg",
+      "price": 800000,
+      "salePrice": 650000,
+      "description": "Túi mini đeo chéo, nhỏ gọn và dễ thương.",
+      "tags": ["sale"]
+    },
+    {
+      "id": 9,
+      "title": "Túi Shoulder Bag",
+      "name": "Fendi",
+      "image": "/images/handbag9.jpg",
+      "price": 2800000,
+      "description": "Túi đeo vai sang trọng, chất liệu da cao cấp.",
+      "tags": []
+    },
+    {
+      "id": 10,
+      "title": "Túi Bucket Bag",
+      "name": "Celine",
+      "image": "/images/handbag10.jpg",
+      "price": 2200000,
+      "description": "Túi bucket độc đáo, thiết kế hiện đại và thời trang.",
+      "tags": []
+    },
+    {
+      "id": 11,
+      "title": "Túi Evening Bag",
+      "name": "Valentino",
+      "image": "/images/handbag11.jpg",
+      "price": 1900000,
+      "salePrice": 1700000,
+      "description": "Túi dự tiệc tối sang trọng, phù hợp cho các sự kiện đặc biệt.",
+      "tags": ["sale"]
+    },
+    {
+      "id": 12,
+      "title": "Túi Messenger Bag",
+      "name": "Bottega Veneta",
+      "image": "/images/handbag12.jpg",
+      "price": 2600000,
+      "description": "Túi messenger thời trang, phong cách trẻ trung và năng động.",
+      "tags": []
+    }
+  ]
+}

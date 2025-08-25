@@ -1,0 +1,14 @@
+{
+  "accounts": [
+    {
+      "id": 1,
+      "username": "admin",
+      "email": "admin@handbag.com",
+      "password": "Admin123!",
+      "fullName": "Administrator",
+      "secretQuestion": "What is your favorite color?",
+      "secretAnswer": "Blue",
+      "wishlist": []
+    }
+  ]
+}
