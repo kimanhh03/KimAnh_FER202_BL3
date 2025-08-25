@@ -30,7 +30,6 @@ const Header = () => {
 
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
-          {/* Main Navigation */}
           <Nav className="me-auto">
             <LinkContainer to="/">
               <Nav.Link className="d-flex align-items-center px-3">
@@ -47,9 +46,7 @@ const Header = () => {
             </LinkContainer>
           </Nav>
 
-          {/* Right Side Navigation */}
           <Nav className="ms-auto">
-            {/* Theme Switch */}
             <Button
               variant="outline-secondary"
               size="sm"
@@ -60,7 +57,6 @@ const Header = () => {
               {theme === "light" ? <Moon size={20} /> : <Sun size={20} />}
             </Button>
 
-            {/* Wishlist */}
             <LinkContainer to="/wishlist">
               <Nav.Link className="d-flex align-items-center px-2 rounded border me-2 position-relative">
                 <Heart size={20} className="me-1" />
@@ -77,7 +73,6 @@ const Header = () => {
               </Nav.Link>
             </LinkContainer>
 
-            {/* Cart */}
             <LinkContainer to="/cart">
               <Nav.Link className="d-flex align-items-center px-2 rounded border me-2 position-relative">
                 <ShoppingCart size={20} className="me-1" />
@@ -116,21 +111,6 @@ const Header = () => {
                       Profile
                     </Dropdown.Item>
                   </LinkContainer>
-
-                  <LinkContainer to="/wishlist">
-                    <Dropdown.Item>
-                      <Heart size={16} className="me-2" />
-                      Wishlist
-                    </Dropdown.Item>
-                  </LinkContainer>
-
-                  <LinkContainer to="/orders">
-                    <Dropdown.Item>
-                      <Package size={16} className="me-2" />
-                      My Orders
-                    </Dropdown.Item>
-                  </LinkContainer>
-
                   <Dropdown.Divider />
                   
                   <Dropdown.Item onClick={logout} className="text-danger">

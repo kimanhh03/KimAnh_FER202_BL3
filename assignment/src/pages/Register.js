@@ -1,9 +1,8 @@
-// src/pages/Register.js
 import { useState, useEffect } from "react"
 import { Container, Row, Col, Card, Form, Button, ProgressBar } from "react-bootstrap"
 import { useAuth } from "../contexts/AuthContext"
 import { useToast } from "../contexts/ToastContext"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, Link } from "react-router-dom"
 
 const Register = () => {
   const [currentStep, setCurrentStep] = useState(1)
@@ -21,7 +20,7 @@ const Register = () => {
   const [errors, setErrors] = useState({})
   const [loading, setLoading] = useState(false)
 
-  const { register, isAuthenticated, redirectAfterLogin, clearRedirect } = useAuth()
+  const { register, isAuthenticated, redirectAfterLogin, clearRedirect, isInitialized } = useAuth()
   const { addToast } = useToast()
   const navigate = useNavigate()
 
@@ -33,13 +32,14 @@ const Register = () => {
     "What city were you born in?",
   ]
 
+  
   useEffect(() => {
-    if (isAuthenticated) {
+    if (isInitialized && isAuthenticated) {
       const redirectPath = redirectAfterLogin || "/"
       clearRedirect()
-      navigate(redirectPath)
+      navigate(redirectPath, { replace: true })
     }
-  }, [isAuthenticated, redirectAfterLogin, clearRedirect, navigate])
+  }, [isAuthenticated, isInitialized, redirectAfterLogin, clearRedirect, navigate])
 
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }))
@@ -97,15 +97,41 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault()
     if (!validateStep2()) return
+    
     setLoading(true)
-    const result = await register(formData)
-    if (result.success) {
-      addToast("Registration successful. You are now logged in.", "success")
-      navigate("/") // redirect to Home immediately so header links work
-    } else {
-      addToast(result.error, "danger")
+    try {
+      const result = await register(formData)
+      if (result.success) {
+        addToast("Registration successful! Welcome!", "success")
+        
+      } else {
+        addToast(result.error, "danger")
+        setLoading(false)
+      }
+    } catch (error) {
+      addToast("Registration failed. Please try again.", "danger")
+      setLoading(false)
     }
-    setLoading(false)
+  }
+
+  if (!isInitialized) {
+    return (
+      <Container>
+        <Row className="justify-content-center">
+          <Col md={8} lg={6}>
+            <Card>
+              <Card.Body className="text-center">
+                <div>Loading...</div>
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
+      </Container>
+    )
+  }
+
+  if (isAuthenticated) {
+    return null
   }
 
   return (
@@ -114,7 +140,7 @@ const Register = () => {
         <Col md={8} lg={6}>
           <Card>
             <Card.Header>
-              <h4 className="text-center mb-3">Register Account</h4>
+              <h4 className="text-center mb-3">Create Account</h4>
               <ProgressBar now={(currentStep / 2) * 100} />
             </Card.Header>
             <Card.Body>
@@ -128,6 +154,7 @@ const Register = () => {
                       value={formData.fullName}
                       onChange={(e) => handleInputChange("fullName", e.target.value)}
                       isInvalid={!!errors.fullName}
+                      placeholder="Enter your full name"
                     />
                     <Form.Control.Feedback type="invalid">{errors.fullName}</Form.Control.Feedback>
                   </Form.Group>
@@ -138,6 +165,7 @@ const Register = () => {
                       value={formData.email}
                       onChange={(e) => handleInputChange("email", e.target.value)}
                       isInvalid={!!errors.email}
+                      placeholder="Enter your email"
                     />
                     <Form.Control.Feedback type="invalid">{errors.email}</Form.Control.Feedback>
                   </Form.Group>
@@ -153,7 +181,7 @@ const Register = () => {
                     {avatarPreview && (
                       <div className="mt-2">
                         <img
-                          src={avatarPreview || "/placeholder.svg"}
+                          src={avatarPreview}
                           alt="Avatar preview"
                           style={{ width: "100px", height: "100px", objectFit: "cover" }}
                           className="rounded"
@@ -163,7 +191,7 @@ const Register = () => {
                   </Form.Group>
                   <div className="d-grid">
                     <Button variant="primary" onClick={handleNext}>
-                      Next
+                      Next Step
                     </Button>
                   </div>
                 </Form>
@@ -179,6 +207,7 @@ const Register = () => {
                       value={formData.username}
                       onChange={(e) => handleInputChange("username", e.target.value)}
                       isInvalid={!!errors.username}
+                      placeholder="Choose a username"
                     />
                     <Form.Control.Feedback type="invalid">{errors.username}</Form.Control.Feedback>
                   </Form.Group>
@@ -189,6 +218,7 @@ const Register = () => {
                       value={formData.password}
                       onChange={(e) => handleInputChange("password", e.target.value)}
                       isInvalid={!!errors.password}
+                      placeholder="Create a password"
                     />
                     <Form.Control.Feedback type="invalid">{errors.password}</Form.Control.Feedback>
                     <Form.Text className="text-muted">
@@ -202,6 +232,7 @@ const Register = () => {
                       value={formData.confirmPassword}
                       onChange={(e) => handleInputChange("confirmPassword", e.target.value)}
                       isInvalid={!!errors.confirmPassword}
+                      placeholder="Confirm your password"
                     />
                     <Form.Control.Feedback type="invalid">{errors.confirmPassword}</Form.Control.Feedback>
                   </Form.Group>
@@ -228,6 +259,7 @@ const Register = () => {
                       value={formData.secretAnswer}
                       onChange={(e) => handleInputChange("secretAnswer", e.target.value)}
                       isInvalid={!!errors.secretAnswer}
+                      placeholder="Enter your answer"
                     />
                     <Form.Control.Feedback type="invalid">{errors.secretAnswer}</Form.Control.Feedback>
                   </Form.Group>
@@ -239,12 +271,19 @@ const Register = () => {
                     </Col>
                     <Col className="text-end">
                       <Button type="submit" variant="primary" disabled={loading}>
-                        {loading ? "Registering..." : "Register"}
+                        {loading ? "Creating Account..." : "Create Account"}
                       </Button>
                     </Col>
                   </Row>
                 </Form>
               )}
+              
+              <hr className="mt-4" />
+              <div className="text-center">
+                <p className="mb-0">
+                  Already have an account? <Link to="/login">Sign in here</Link>
+                </p>
+              </div>
             </Card.Body>
           </Card>
         </Col>

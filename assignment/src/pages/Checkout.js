@@ -77,7 +77,7 @@ const Checkout = () => {
       <Container>
         <div className="text-center py-5">
           <h3>Please log in to proceed with checkout</h3>
-          <Button variant="primary" onClick={() => navigate("/login")}>
+          <Button variant="warning" onClick={() => navigate("/login")}>
             Login
           </Button>
         </div>
@@ -90,7 +90,7 @@ const Checkout = () => {
       <Container>
         <div className="text-center py-5">
           <h3>Your cart is empty</h3>
-          <Button variant="primary" onClick={() => navigate("/")}>
+          <Button variant="warning" onClick={() => navigate("/")}>
             Continue Shopping
           </Button>
         </div>
@@ -182,7 +182,13 @@ const Checkout = () => {
                   </Form.Select>
                 </Form.Group>
 
-                <Button type="submit" variant="primary" size="lg" disabled={loading} className="w-100">
+                <Button
+                  type="submit"
+                  variant="warning"
+                  size="lg"
+                  disabled={loading}
+                  className="w-100 fw-semibold"
+                >
                   {loading ? "Processing..." : "Place Order"}
                 </Button>
               </Form>

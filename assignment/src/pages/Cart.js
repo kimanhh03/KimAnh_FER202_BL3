@@ -17,7 +17,7 @@ const Cart = () => {
     return (
       <Container>
         <div className="text-center py-5">
-          <ShoppingBag size={64} className="text-muted mb-3" />
+          <ShoppingBag size={64} className="text-secondary mb-3" />
           <h3>Your cart is empty</h3>
           <p className="text-muted">Please add some products to your cart</p>
           <LinkContainer to="/">
@@ -118,11 +118,11 @@ const Cart = () => {
 
               <div className="d-grid gap-2">
                 <LinkContainer to="/checkout">
-                  <Button variant="primary" size="lg">
+                  <Button variant="warning" size="lg" className="fw-semibold">
                     Checkout
                   </Button>
                 </LinkContainer>
-                <LinkContainer to="/">
+                <LinkContainer to="/products">
                   <Button variant="outline-secondary">Continue Shopping</Button>
                 </LinkContainer>
               </div>

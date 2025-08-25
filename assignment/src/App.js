@@ -15,7 +15,7 @@ import Wishlist from "./pages/Wishlist"
 import Checkout from "./pages/Checkout"
 import ToastContainer from "./components/ToastContainer"
 import { ThemeProvider } from "./contexts/ThemeContext"
-
+import Profile from "./pages/Profile"
 import Products from "./pages/Products"
 
 function App() {
@@ -38,6 +38,7 @@ function App() {
                       <Route path="/cart" element={<Cart />} />
                       <Route path="/wishlist" element={<Wishlist />} />
                       <Route path="/checkout" element={<Checkout />} />
+                      <Route path="/profile" element={<Profile />} />
                     </Routes>
                   </main>
                   <Footer />
