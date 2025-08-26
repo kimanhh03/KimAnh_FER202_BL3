@@ -34,7 +34,7 @@ const Wishlist = () => {
           <h3>Your wishlist is empty</h3>
           <p className="text-muted">Start adding some products you love</p>
           <LinkContainer to="/products">
-            <Button variant="primary">Browse Products</Button>
+            <Button variant="warning">Browse Products</Button>
           </LinkContainer>
         </div>
       </Container>
@@ -81,7 +81,7 @@ const Wishlist = () => {
                 <div className="mt-auto">
                   <div className="d-grid gap-2">
                     <Button
-                      variant="primary"
+                      variant="warning"
                       onClick={() => handleAddToCart(product)}
                     >
                       <ShoppingCart size={16} className="me-2" />

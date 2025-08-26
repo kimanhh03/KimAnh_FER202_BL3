@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import { Container, Row, Col, Form, InputGroup, Button, Badge, Card } from 'react-bootstrap'
 import { Search, Filter, Grid, List, SlidersHorizontal } from 'lucide-react'
+import axios from 'axios'
 import ProductCard from '../components/ProductCard'
 
 const Products = () => {
   const [products, setProducts] = useState([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedBrand, setSelectedBrand] = useState('')
   const [priceRange, setPriceRange] = useState('')
@@ -16,11 +18,27 @@ const Products = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await fetch('http://localhost:3001/products')
-        const data = await response.json()
-        setProducts(data)
+        setLoading(true)
+        setError(null)
+        
+        const response = await axios.get('http://localhost:3001/products')
+        // Handle both array and object with products property
+        const productsData = Array.isArray(response.data) ? response.data : response.data.products
+        setProducts(productsData || [])
       } catch (error) {
         console.error('Error fetching products:', error)
+        
+        // Handle different types of axios errors
+        if (error.response) {
+          // Server responded with error status
+          setError(`Server error: ${error.response.status}`)
+        } else if (error.request) {
+          // Network error
+          setError('Network error - please check your connection')
+        } else {
+          // Other error
+          setError(error.message || 'An error occurred while fetching products')
+        }
       } finally {
         setLoading(false)
       }
@@ -51,14 +69,14 @@ const Products = () => {
       filtered = filtered.filter(product => {
         const price = product.salePrice || product.price
         switch (priceRange) {
-          case 'under-1m':
-            return price < 1000000
-          case '1m-2m':
-            return price >= 1000000 && price < 2000000
-          case '2m-3m':
-            return price >= 2000000 && price < 3000000
-          case 'over-3m':
-            return price >= 3000000
+          case 'under-8m':
+            return price < 8000000
+          case '8m-10m':
+            return price >= 8000000 && price < 10000000
+          case '10m-12m':
+            return price >= 10000000 && price < 12000000
+          case 'over-12m':
+            return price >= 12000000
           default:
             return true
         }
@@ -107,10 +125,29 @@ const Products = () => {
     return (
       <Container>
         <div className="text-center py-5">
-          <div className="spinner-border text-primary" role="status">
+          <div className="spinner-border text-warning" role="status">
             <span className="visually-hidden">Loading...</span>
           </div>
           <p className="mt-3">Loading products...</p>
+        </div>
+      </Container>
+    )
+  }
+
+  if (error) {
+    return (
+      <Container>
+        <div className="text-center py-5">
+          <div className="alert alert-danger">
+            <h4>Error Loading Products</h4>
+            <p>{error}</p>
+            <Button 
+              variant="warning" 
+              onClick={() => window.location.reload()}
+            >
+              Try Again
+            </Button>
+          </div>
         </div>
       </Container>
     )
@@ -138,7 +175,7 @@ const Products = () => {
             </div>
             <div className="d-flex gap-2">
               <Button
-                variant={showFilters ? "primary" : "outline-primary"}
+                variant={showFilters ? "warning" : "outline-warning"}
                 onClick={() => setShowFilters(!showFilters)}
                 className="d-lg-none"
               >
@@ -146,13 +183,13 @@ const Products = () => {
               </Button>
               <div className="btn-group">
                 <Button
-                  variant={viewMode === 'grid' ? 'primary' : 'outline-secondary'}
+                  variant={viewMode === 'grid' ? 'warning' : 'outline-secondary'}
                   onClick={() => setViewMode('grid')}
                 >
                   <Grid size={16} />
                 </Button>
                 <Button
-                  variant={viewMode === 'list' ? 'primary' : 'outline-secondary'}
+                  variant={viewMode === 'list' ? 'warning' : 'outline-secondary'}
                   onClick={() => setViewMode('list')}
                 >
                   <List size={16} />
@@ -206,15 +243,15 @@ const Products = () => {
                   onChange={(e) => setPriceRange(e.target.value)}
                 >
                   <option value="">All prices</option>
-                  <option value="under-1m">Under 1,000,000đ</option>
-                  <option value="1m-2m">1,000,000đ - 2,000,000đ</option>
-                  <option value="2m-3m">2,000,000đ - 3,000,000đ</option>
-                  <option value="over-3m">Over 3,000,000đ</option>
+                  <option value="under-8m">Under 8,000,000đ</option>
+                  <option value="8m-10m">8,000,000đ - 10,000,000đ</option>
+                  <option value="10m-12m">10,000,000đ - 12,000,000đ</option>
+                  <option value="over-12m">Over 12,000,000đ</option>
                 </Form.Select>
               </Form.Group>
 
               <Form.Group className="mb-4">
-                <Form.Label className="fw-semibold">Sort by</Form.Label>
+                <Form.Label className="rounded-xl border-2 border-yellow-500 font-semibold p-2 transition hover:border-yellow-500 hover:bg-yellow-100 cursor-pointer">Sort by</Form.Label>
                 <Form.Select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
@@ -243,7 +280,7 @@ const Products = () => {
               <div className="d-flex flex-wrap gap-2 align-items-center">
                 <span className="text-muted">Active filters:</span>
                 {searchTerm && (
-                  <Badge bg="primary" className="d-flex align-items-center">
+                  <Badge bg="warning" className="d-flex align-items-center">
                     Search: "{searchTerm}"
                     <button
                       className="btn-close btn-close-white ms-2"
@@ -265,10 +302,10 @@ const Products = () => {
                 {priceRange && (
                   <Badge bg="success" className="d-flex align-items-center">
                     Price: {
-                      priceRange === 'under-1m' ? 'Under 1M' :
-                      priceRange === '1m-2m' ? '1M - 2M' :
-                      priceRange === '2m-3m' ? '2M - 3M' :
-                      'Over 3M'
+                      priceRange === 'under-8m' ? 'Under 8M' :
+                      priceRange === '8m-10m' ? '8M - 10M' :
+                      priceRange === '10m-12m' ? '10M - 12M' :
+                      'Over 12M'
                     }
                     <button
                       className="btn-close btn-close-white ms-2"
@@ -307,7 +344,7 @@ const Products = () => {
                 Try adjusting filters or search keywords
               </p>
               {hasActiveFilters && (
-                <Button variant="primary" onClick={clearFilters}>
+                <Button variant="warning" onClick={clearFilters}>
                   Clear filters
                 </Button>
               )}

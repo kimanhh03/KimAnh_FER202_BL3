@@ -40,7 +40,7 @@ const NavBar = ({ onSearchChange, onSortChange }) => {
         </InputGroup>
       </Col>
       <Col md={4}>
-        <Form.Select onChange={handleSortChange}>
+        <Form.Select onChange={handleSortChange} style={{ backgroundColor: "#fff8f0" }}>
           <option value="">Sort by</option>
           <option value="name-asc">Name A→Z</option>
           <option value="price-asc">Price Low → High</option>

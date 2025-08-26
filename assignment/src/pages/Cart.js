@@ -21,7 +21,7 @@ const Cart = () => {
           <h3>Your cart is empty</h3>
           <p className="text-muted">Please add some products to your cart</p>
           <LinkContainer to="/">
-            <Button variant="primary">Continue Shopping</Button>
+            <Button variant="warning">Continue Shopping</Button>
           </LinkContainer>
         </div>
       </Container>

@@ -1,4 +1,4 @@
-import { createContext, useContext, useReducer, useEffect, useMemo } from "react"
+import { createContext, useContext, useReducer, useEffect, useMemo, useCallback } from "react"
 
 const CartContext = createContext()
 
@@ -58,19 +58,33 @@ const initialState = {
   items: [],
 }
 
+const saveCartToLocalStorage = (items) => {
+  try {
+    localStorage.setItem("cart", JSON.stringify(items))
+  } catch (error) {
+    console.error("Error saving cart to localStorage:", error)
+  }
+}
+
+const loadCartFromLocalStorage = () => {
+  try {
+    const savedCart = localStorage.getItem("cart")
+    return savedCart ? JSON.parse(savedCart) : []
+  } catch (error) {
+    console.error("Error loading cart from localStorage:", error)
+    return []
+  }
+}
+
 export const CartProvider = ({ children }) => {
   const [state, dispatch] = useReducer(cartReducer, initialState)
 
   useEffect(() => {
-    const savedCart = localStorage.getItem("cart")
-    if (savedCart) {
-      dispatch({ type: "LOAD_CART", payload: JSON.parse(savedCart) })
+    const savedItems = loadCartFromLocalStorage()
+    if (savedItems.length > 0) {
+      dispatch({ type: "LOAD_CART", payload: savedItems })
     }
   }, [])
-
-  useEffect(() => {
-    localStorage.setItem("cart", JSON.stringify(state.items))
-  }, [state.items])
 
   const count = useMemo(() => {
     return state.items.reduce((total, item) => total + item.qty, 0)
@@ -83,25 +97,52 @@ export const CartProvider = ({ children }) => {
     }, 0)
   }, [state.items])
 
-  const addToCart = (product) => {
+  const addToCart = useCallback((product) => {
     dispatch({ type: "ADD_TO_CART", payload: product })
-  }
+    
+    const existingItem = state.items.find((item) => item.id === product.id)
+    let newItems
+    
+    if (existingItem) {
+      newItems = state.items.map((item) => 
+        item.id === product.id ? { ...item, qty: item.qty + 1 } : item
+      )
+    } else {
+      newItems = [...state.items, { ...product, qty: 1 }]
+    }
+    
+    saveCartToLocalStorage(newItems)
+  }, [state.items])
 
-  const removeFromCart = (id) => {
+  const removeFromCart = useCallback((id) => {
     dispatch({ type: "REMOVE_FROM_CART", payload: id })
-  }
+    
+    const newItems = state.items.filter((item) => item.id !== id)
+    saveCartToLocalStorage(newItems)
+  }, [state.items])
 
-  const incrementQty = (id) => {
+  const incrementQty = useCallback((id) => {
     dispatch({ type: "INCREMENT_QTY", payload: id })
-  }
+    
+    const newItems = state.items.map((item) => 
+      item.id === id ? { ...item, qty: item.qty + 1 } : item
+    )
+    saveCartToLocalStorage(newItems)
+  }, [state.items])
 
-  const decrementQty = (id) => {
+  const decrementQty = useCallback((id) => {
     dispatch({ type: "DECREMENT_QTY", payload: id })
-  }
+    
+    const newItems = state.items.map((item) =>
+      item.id === id ? { ...item, qty: Math.max(1, item.qty - 1) } : item
+    )
+    saveCartToLocalStorage(newItems)
+  }, [state.items])
 
-  const clearCart = () => {
+  const clearCart = useCallback(() => {
     dispatch({ type: "CLEAR_CART" })
-  }
+    saveCartToLocalStorage([])
+  }, [])
 
   return (
     <CartContext.Provider

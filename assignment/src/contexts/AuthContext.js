@@ -1,4 +1,5 @@
 import { createContext, useContext, useReducer, useEffect, useCallback } from "react"
+import axios from "axios"
 
 const AuthContext = createContext()
 
@@ -89,10 +90,14 @@ export const AuthProvider = ({ children }) => {
 
   const login = useCallback(async (email, password) => {
     try {
-      const response = await fetch(
-        `http://localhost:3002/accounts?email=${email}&password=${password}`
-      )
-      const accounts = await response.json()
+      const response = await axios.get("http://localhost:3002/accounts", {
+        params: {
+          email: email,
+          password: password
+        }
+      })
+      
+      const accounts = response.data
 
       if (accounts.length > 0) {
         const user = accounts[0]
@@ -113,14 +118,40 @@ export const AuthProvider = ({ children }) => {
       }
     } catch (error) {
       console.error("Login error:", error)
-      return { success: false, error: "Connection error to server" }
+      
+      // Handle different types of axios errors
+      if (error.response) {
+        // Server responded with error status
+        return { 
+          success: false, 
+          error: `Server error: ${error.response.status}` 
+        }
+      } else if (error.request) {
+        // Network error
+        return { 
+          success: false, 
+          error: "Network error - please check your connection" 
+        }
+      } else {
+        // Other error
+        return { 
+          success: false, 
+          error: error.message || "Connection error to server" 
+        }
+      }
     }
   }, [])
 
   const register = useCallback(async (userData) => {
     try {
-      const checkResponse = await fetch(`http://localhost:3002/accounts?email=${userData.email}`)
-      const existingAccounts = await checkResponse.json()
+      // Check if email already exists
+      const checkResponse = await axios.get("http://localhost:3002/accounts", {
+        params: {
+          email: userData.email
+        }
+      })
+      
+      const existingAccounts = checkResponse.data
       
       if (existingAccounts.length > 0) {
         return { success: false, error: "Email already exists" }
@@ -137,31 +168,55 @@ export const AuthProvider = ({ children }) => {
         wishlist: [],
       }
 
-      const response = await fetch("http://localhost:3002/accounts", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newUser),
+      const response = await axios.post("http://localhost:3002/accounts", newUser, {
+        headers: { 
+          "Content-Type": "application/json" 
+        }
       })
 
-      if (response.ok) {
-        const userData = {
-          id: newUser.id,
-          name: newUser.fullName,
-          email: newUser.email,
-        }
-        
-        dispatch({
-          type: "LOGIN",
-          payload: { user: userData },
-        })
-        
-        return { success: true }
-      } else {
-        return { success: false, error: "Registration failed" }
+      // Axios automatically throws for 4xx/5xx status codes
+      const userDataForState = {
+        id: newUser.id,
+        name: newUser.fullName,
+        email: newUser.email,
       }
+      
+      dispatch({
+        type: "LOGIN",
+        payload: { user: userDataForState },
+      })
+      
+      return { success: true }
+      
     } catch (error) {
       console.error("Register error:", error)
-      return { success: false, error: "Registration failed" }
+      
+      // Handle different types of axios errors
+      if (error.response) {
+        // Server responded with error status
+        if (error.response.status === 400) {
+          return { success: false, error: "Invalid registration data" }
+        } else if (error.response.status === 409) {
+          return { success: false, error: "Email already exists" }
+        } else {
+          return { 
+            success: false, 
+            error: `Registration failed: ${error.response.status}` 
+          }
+        }
+      } else if (error.request) {
+        // Network error
+        return { 
+          success: false, 
+          error: "Network error - please check your connection" 
+        }
+      } else {
+        // Other error
+        return { 
+          success: false, 
+          error: error.message || "Registration failed" 
+        }
+      }
     }
   }, [])
 

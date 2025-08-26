@@ -7,8 +7,7 @@
       "password": "Admin123!",
       "fullName": "Administrator",
       "secretQuestion": "What is your favorite color?",
-      "secretAnswer": "Blue",
-      "wishlist": []
+      "secretAnswer": "Blue"
     },
     {
       "id": 1756139351977,
@@ -17,8 +16,7 @@
       "password": "33204K@nh",
       "fullName": "kim anh",
       "secretQuestion": "What is the name of your first pet?",
-      "secretAnswer": "ky",
-      "wishlist": []
+      "secretAnswer": "ky"
     }
   ]
 }

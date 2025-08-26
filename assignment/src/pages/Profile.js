@@ -206,7 +206,7 @@ const Profile = () => {
                   <h5><Lock size={20} className="me-2" />Security</h5>
                 </Card.Header>
                 <Card.Body>
-                  <Button variant="outline-primary" className="w-100" onClick={() => setShowPasswordModal(true)}>
+                  <Button variant="outline-warning" className="w-100" onClick={() => setShowPasswordModal(true)}>
                     Change Password
                   </Button>
                 </Card.Body>
@@ -259,7 +259,7 @@ const Profile = () => {
                       <Form.Control.Feedback type="invalid">{errors.dateOfBirth}</Form.Control.Feedback>
                     </Form.Group>
                     <div className="d-grid">
-                      <Button type="submit" variant="primary" disabled={loading}>
+                      <Button type="submit" variant="warning" disabled={loading}>
                         <Save size={16} className="me-2" />
                         {loading ? "Saving..." : "Save Changes"}
                       </Button>
@@ -348,7 +348,7 @@ const Profile = () => {
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClosePasswordModal}>Cancel</Button>
-          <Button variant="primary" onClick={handlePasswordSubmit} disabled={passwordLoading}>
+          <Button variant="warning" onClick={handlePasswordSubmit} disabled={passwordLoading}>
             {passwordLoading ? "Changing..." : "Change Password"}
           </Button>
         </Modal.Footer>

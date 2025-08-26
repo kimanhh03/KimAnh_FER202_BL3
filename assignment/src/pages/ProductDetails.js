@@ -2,6 +2,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Container, Row, Col, Card, Button, Badge, Spinner, Alert } from "react-bootstrap";
 import { ShoppingCart, Heart, ArrowLeft } from "lucide-react";
+import axios from "axios";
 import { useAuth } from "../contexts/AuthContext";
 import { useCart } from "../contexts/CartContext";
 import { useWishlist } from "../contexts/WishlistContext";
@@ -27,20 +28,30 @@ function ProductDetails() {
         
         console.log('Fetching product with ID:', id);
         
-        const res = await fetch(`http://localhost:3001/products/${id}`);
-        console.log('Response status:', res.status);
+        const response = await axios.get(`http://localhost:3001/products/${id}`);
+        console.log('Response status:', response.status);
+        console.log('Product data:', response.data);
         
-        if (!res.ok) {
-          throw new Error("Product not found");
-        }
-        
-        const data = await res.json();
-        console.log('Product data:', data);
-        setProduct(data);
+        setProduct(response.data);
         
       } catch (err) {
         console.error('Error fetching product:', err);
-        setError(err.message);
+        
+        // Handle different types of axios errors
+        if (err.response) {
+          // Server responded with error status
+          if (err.response.status === 404) {
+            setError("Product not found");
+          } else {
+            setError(`Server error: ${err.response.status}`);
+          }
+        } else if (err.request) {
+          // Network error
+          setError("Network error - please check your connection");
+        } else {
+          // Other error
+          setError(err.message || "An error occurred");
+        }
       } finally {
         setLoading(false);
       }
@@ -95,7 +106,7 @@ function ProductDetails() {
     return (
       <Container className="py-4">
         <Alert variant="danger">
-          <Alert.Heading>❌ Error</Alert.Heading>
+          <Alert.Heading> Error</Alert.Heading>
           <p>{error}</p>
           <p>Debug info: Product ID = {id}</p>
           <hr />
@@ -149,7 +160,7 @@ function ProductDetails() {
               />
               <div className="position-absolute top-0 start-0 m-3 d-flex flex-column gap-2">
                 {product.tags?.includes("hot") && <Badge bg="danger" className="shadow-sm">HOT</Badge>}
-                {discount > 0 && <Badge bg="success" className="shadow-sm">-{discount}%</Badge>}
+                {discount > 0 && <Badge bg="warning" className="shadow-sm">-{discount}%</Badge>}
               </div>
             </div>
           </Card>
@@ -180,10 +191,10 @@ function ProductDetails() {
               <Col sm={8}>
                 <Button 
                   variant="warning" 
-                  size="lg" 
+                  size="sm" 
                   className="w-100 fw-semibold" 
                   onClick={handleAddToCart}
-                  style={{ borderRadius: "8px", padding: "12px" }}
+                  style={{ borderRadius: "5px", padding: "6px 10px" }}
                 >
                   <ShoppingCart size={20} className="me-2" /> 
                   Add to Cart
@@ -192,10 +203,10 @@ function ProductDetails() {
               <Col sm={4}>
                 <Button
                   variant={isAuthenticated && isWished(product.id) ? "danger" : "outline-danger"}
-                  size="lg"
+                  size="sm"
                   className="w-100"
                   onClick={handleWishlist}
-                  style={{ borderRadius: "8px", padding: "12px" }}
+                  style={{ borderRadius: "5px", padding: "6px 10px" }}
                 >
                   <Heart
                     size={20}

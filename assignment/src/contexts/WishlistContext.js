@@ -1,4 +1,4 @@
-import { createContext, useContext, useReducer, useEffect, useMemo } from "react"
+import { createContext, useContext, useReducer, useEffect, useMemo, useCallback } from "react"
 
 const WishlistContext = createContext()
 
@@ -31,40 +31,66 @@ const initialState = {
   items: [],
 }
 
+const saveWishlistToLocalStorage = (items) => {
+  try {
+    localStorage.setItem("wishlist", JSON.stringify(items))
+  } catch (error) {
+    console.error("Error saving wishlist to localStorage:", error)
+  }
+}
+
+const loadWishlistFromLocalStorage = () => {
+  try {
+    const savedWishlist = localStorage.getItem("wishlist")
+    return savedWishlist ? JSON.parse(savedWishlist) : []
+  } catch (error) {
+    console.error("Error loading wishlist from localStorage:", error)
+    return []
+  }
+}
+
 export const WishlistProvider = ({ children }) => {
   const [state, dispatch] = useReducer(wishlistReducer, initialState)
 
   useEffect(() => {
-    const savedWishlist = localStorage.getItem("wishlist")
-    if (savedWishlist) {
-      dispatch({ type: "LOAD_WISHLIST", payload: JSON.parse(savedWishlist) })
+    const savedItems = loadWishlistFromLocalStorage()
+    if (savedItems.length > 0) {
+      dispatch({ type: "LOAD_WISHLIST", payload: savedItems })
     }
   }, [])
-
-  useEffect(() => {
-    localStorage.setItem("wishlist", JSON.stringify(state.items))
-  }, [state.items])
 
   const isWished = useMemo(() => {
     const wishlistIds = new Set(state.items.map((item) => item.id))
     return (id) => wishlistIds.has(id)
   }, [state.items])
 
-  const addToWishlist = (product) => {
+  const addToWishlist = useCallback((product) => {
+    const alreadyExists = state.items.some((item) => item.id === product.id)
+    if (alreadyExists) {
+      console.warn("Product already in wishlist:", product.id)
+      return
+    }
+
     dispatch({ type: "ADD_TO_WISHLIST", payload: product })
-  }
+    
+    const newItems = [...state.items, product]
+    saveWishlistToLocalStorage(newItems)
+  }, [state.items])
 
-  const removeFromWishlist = (id) => {
+  const removeFromWishlist = useCallback((id) => {
     dispatch({ type: "REMOVE_FROM_WISHLIST", payload: id })
-  }
+    
+    const newItems = state.items.filter((item) => item.id !== id)
+    saveWishlistToLocalStorage(newItems)
+  }, [state.items])
 
-  const toggleWishlist = (product) => {
+  const toggleWishlist = useCallback((product) => {
     if (isWished(product.id)) {
       removeFromWishlist(product.id)
     } else {
       addToWishlist(product)
     }
-  }
+  }, [isWished, addToWishlist, removeFromWishlist])
 
   return (
     <WishlistContext.Provider

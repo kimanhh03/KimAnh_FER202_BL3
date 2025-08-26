@@ -65,7 +65,7 @@ const ProductCard = ({ product, viewMode = 'grid' }) => {
               <Badge bg="danger" className="me-1 mb-1">HOT</Badge>
             )}
             {product.tags.includes("sale") && discountPercentage > 0 && (
-              <Badge bg="success" className="mb-1">-{discountPercentage}%</Badge>
+              <Badge bg="warning" className="mb-1">-{discountPercentage}%</Badge>
             )}
           </div>
           <div className="position-absolute top-0 end-0 m-2">
